@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:qassimha/shared/theme.dart';
 import 'core/di/di.dart';
 import 'core/remote/firebase_config.dart';
 import 'core/resources/routes_manager.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
               Locale('ar'),
               Locale('en'),
             ],
-            theme: AppThemes.lightTheme1,
+            theme: AppTheme.theme,
             themeMode: ThemeMode.light,
             debugShowCheckedModeBanner: false,
             onGenerateRoute: RouteGenerator.getRoute,

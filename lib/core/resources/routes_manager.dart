@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:qassimha/features/Auth/singin_singup/presentation/pages/login_page.dart';
 import 'package:qassimha/features/Welcome/presentation/pages/Welcome_page.dart';
 
 
 class RoutesManager {
   static const String welcomeScreen = '/welcomeScreen';
+  static const String loginPage = '/LoginPage';
 
 }
 
@@ -12,6 +14,8 @@ class RouteGenerator {
     switch (settings.name) {
       case RoutesManager.welcomeScreen:
         return FadeScaleAnimation(const WelcomePage());
+        case RoutesManager.loginPage:
+        return FadeScaleAnimation(const LoginPage());
 
       default:
         return unDefinedRoute();
