@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qassimha/features/Auth/singin_singup/presentation/pages/login_page.dart';
+import 'package:qassimha/features/Groups/presentation/pages/Groups_page.dart';
 import 'package:qassimha/features/Home/presentation/pages/Home_page.dart';
 import 'package:qassimha/features/Welcome/presentation/pages/Welcome_page.dart';
 
@@ -8,6 +9,7 @@ class RoutesManager {
   static const String welcomeScreen = '/welcomeScreen';
   static const String loginPage = '/LoginPage';
   static const String homePage = '/HomePage';
+  static const String groupsPage = '/GroupsPage';
 
 }
 
@@ -20,6 +22,8 @@ class RouteGenerator {
         return FadeScaleAnimation(const LoginPage());
         case RoutesManager.homePage:
         return FadeScaleAnimation(const HomePage());
+        case RoutesManager.groupsPage:
+        return FadeScaleAnimation(const GroupsPage());
 
       default:
         return unDefinedRoute();

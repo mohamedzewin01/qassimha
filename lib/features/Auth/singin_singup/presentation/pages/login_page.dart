@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage>
           if (state is AuthLoginSuccess) {
             _showSuccessMessage();
             // Navigate to home page
-            Navigator.pushReplacementNamed(context,RoutesManager.homePage);
+            Navigator.pushReplacementNamed(context,RoutesManager.groupsPage);
           } else if (state is AuthLoginFailure) {
             _showErrorMessage(state.exception.toString());
           }
