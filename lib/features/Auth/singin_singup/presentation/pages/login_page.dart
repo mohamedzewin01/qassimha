@@ -1,7 +1,13 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qassimha/core/resources/routes_manager.dart';
+import 'package:qassimha/features/Auth/singin_singup/presentation/widgets/google_sign_in_button.dart';
 import '../../../../../core/di/di.dart';
 import '../bloc/Auth_cubit.dart';
+
+import '../widgets/animated_logo.dart';
+import '../widgets/welcome_text.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,16 +16,15 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with TickerProviderStateMixin {
   late AuthCubit viewModel;
-  late AnimationController _mainController;
   late AnimationController _backgroundController;
-  late AnimationController _buttonController;
+  late AnimationController _contentController;
 
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _scaleAnimation;
   late Animation<double> _backgroundAnimation;
+  late Animation<double> _contentFadeAnimation;
+  late Animation<Offset> _contentSlideAnimation;
 
   @override
   void initState() {
@@ -30,89 +35,98 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   void _initAnimations() {
-    _mainController = AnimationController(
+    _backgroundController = AnimationController(
+      duration: const Duration(seconds: 15),
+      vsync: this,
+    );
+
+    _contentController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
-    _backgroundController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
+    _backgroundAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _backgroundController,
+      curve: Curves.linear,
+    ));
 
-    _buttonController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
+    _contentFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _contentController,
+      curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
+    ));
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+    _contentSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOutBack),
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: const Interval(0.3, 1.0, curve: Curves.elasticOut),
-      ),
-    );
-
-    _backgroundAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _backgroundController, curve: Curves.linear),
-    );
+    ).animate(CurvedAnimation(
+      parent: _contentController,
+      curve: const Interval(0.4, 1.0, curve: Curves.easeOutBack),
+    ));
   }
 
   void _startAnimations() {
-    _mainController.forward();
     _backgroundController.repeat();
+    _contentController.forward();
   }
 
   @override
   void dispose() {
-    _mainController.dispose();
     _backgroundController.dispose();
-    _buttonController.dispose();
+    _contentController.dispose();
     super.dispose();
   }
 
   void _handleGoogleSignIn() {
     viewModel.signInWithGoogle();
+
   }
 
-  void _showMessage(String message, bool isSuccess) {
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white),
+            SizedBox(width: 12),
+            Text('تم تسجيل الدخول بنجاح!'),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  void _showErrorMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            Icon(
-              isSuccess ? Icons.check_circle : Icons.error_outline,
-              color: Colors.white,
-            ),
+            const Icon(Icons.error_outline, color: Colors.white),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                message,
-                style: const TextStyle(fontSize: 14),
+                'حدث خطأ: $message',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        backgroundColor: isSuccess ? Colors.green : Colors.red,
+        backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }
@@ -127,15 +141,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthLoginSuccess) {
-            _showMessage('تم تسجيل الدخول بنجاح!', true);
-            // Navigate to home screen
-            // Navigator.pushReplacementNamed(context, '/home');
+            _showSuccessMessage();
+            // Navigate to home page
+            Navigator.pushReplacementNamed(context,RoutesManager.homePage);
           } else if (state is AuthLoginFailure) {
-            _showMessage('فشل في تسجيل الدخول. حاول مرة أخرى.', false);
+            _showErrorMessage(state.exception.toString());
           }
         },
         child: Scaffold(
-          extendBodyBehindAppBar: true,
           body: AnimatedBuilder(
             animation: _backgroundAnimation,
             builder: (context, child) {
@@ -153,7 +166,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     transform: GradientRotation(
-                      _backgroundAnimation.value * 2 * 3.14159 / 6,
+                      _backgroundAnimation.value * 2 * 3.14159 / 4,
                     ),
                   ),
                 ),
@@ -164,27 +177,24 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       vertical: 20.0,
                     ),
                     child: SlideTransition(
-                      position: _slideAnimation,
+                      position: _contentSlideAnimation,
                       child: FadeTransition(
-                        opacity: _fadeAnimation,
+                        opacity: _contentFadeAnimation,
                         child: Column(
                           children: [
-                            // Logo Section
                             Expanded(
                               flex: 2,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ScaleTransition(
-                                    scale: _scaleAnimation,
-                                    child: _buildAnimatedLogo(isSmallScreen),
+                                  AnimatedLogo(
+                                    size: isSmallScreen ? 100 : 120,
                                   ),
                                   SizedBox(height: isSmallScreen ? 32 : 48),
-                                  _buildWelcomeText(),
+                                  const WelcomeText(),
                                 ],
                               ),
                             ),
-                            // Login Section
                             Expanded(
                               flex: 1,
                               child: Column(
@@ -193,11 +203,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   BlocBuilder<AuthCubit, AuthState>(
                                     builder: (context, state) {
                                       final isLoading = state is AuthLoginLoading;
-                                      return _buildGoogleSignInButton(isLoading);
+
+                                      return GoogleSignInButton(
+                                        onPressed: _handleGoogleSignIn,
+                                        isLoading: isLoading,
+                                      );
                                     },
                                   ),
                                   const SizedBox(height: 24),
-                                  _buildPrivacyText(),
+                                  _buildFooterText(),
                                 ],
                               ),
                             ),
@@ -215,169 +229,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildAnimatedLogo(bool isSmallScreen) {
-    return Container(
-      width: isSmallScreen ? 100 : 120,
-      height: isSmallScreen ? 100 : 120,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular((isSmallScreen ? 100 : 120) / 2),
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF667EEA).withOpacity(0.1),
-            const Color(0xFF764BA2).withOpacity(0.1),
-          ],
-          stops: const [0.0, 1.0],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF667EEA).withOpacity(0.2),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Center(
-        child: Container(
-          width: (isSmallScreen ? 100 : 120) * 0.7,
-          height: (isSmallScreen ? 100 : 120) * 0.7,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular((isSmallScreen ? 100 : 120) * 0.35),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular((isSmallScreen ? 100 : 120) * 0.35),
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF667EEA),
-                    Color(0xFF764BA2),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: const Icon(
-                Icons.auto_awesome,
-                size: 40,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWelcomeText() {
-    return Column(
-      children: [
-        Text(
-          'مرحباً بك',
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width < 400 ? 28 : 32,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1F2937),
-            letterSpacing: 0.5,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 12),
-        Text(
-          'سجّل دخولك للمتابعة والاستمتاع بتجربة رائعة',
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width < 400 ? 14 : 16,
-            color: const Color(0xFF6B7280),
-            height: 1.6,
-            letterSpacing: 0.3,
-          ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGoogleSignInButton(bool isLoading) {
-    return GestureDetector(
-      onTap: isLoading ? null : _handleGoogleSignIn,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: double.infinity,
-        height: 56,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.grey[300]!,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Center(
-          child: isLoading
-              ? const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Color(0xFF4285F4),
-              ),
-            ),
-          )
-              : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      'https://developers.google.com/identity/images/g-logo.png',
-                    ),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Text(
-                'تسجيل الدخول باستخدام Google',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1F2937),
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPrivacyText() {
+  Widget _buildFooterText() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
