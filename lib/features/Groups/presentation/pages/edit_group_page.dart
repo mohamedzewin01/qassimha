@@ -6,8 +6,8 @@ import 'package:qassimha/features/Groups/data/models/response/get_groups_model.d
 
 class EditGroupPage extends StatefulWidget {
   final Groups group;
-
-  const EditGroupPage({super.key, required this.group});
+  final GroupsCubit viewModel;
+  const EditGroupPage({super.key, required this.group, required this.viewModel});
 
   @override
   State<EditGroupPage> createState() => _EditGroupPageState();
@@ -108,7 +108,9 @@ class _EditGroupPageState extends State<EditGroupPage>
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
-        child: BlocListener<GroupsCubit, GroupsState>(
+        child: BlocProvider.value(
+ value: widget.viewModel,
+  child: BlocListener<GroupsCubit, GroupsState>(
           listener: (context, state) {
             if (state is UpdateGroupsSuccess) {
               Navigator.pop(context, true); // Return true to indicate success
@@ -154,6 +156,7 @@ class _EditGroupPageState extends State<EditGroupPage>
             ],
           ),
         ),
+),
       ),
     );
   }
@@ -748,7 +751,7 @@ class _EditGroupPageState extends State<EditGroupPage>
         isActive: _isActive ? 1 : 0,
       );
 
-      context.read<GroupsCubit>().updateGroups(request);
+    widget.viewModel.updateGroups(request);
     }
   }
 

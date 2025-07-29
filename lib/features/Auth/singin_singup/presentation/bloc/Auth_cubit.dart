@@ -28,6 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
             CacheService.setData(key: CacheKeys.displayName, value: result.data!.user?.displayName);
             CacheService.setData(key: CacheKeys.displayName, value: result.data!.user?.displayName);
             CacheService.setData(key: CacheKeys.token, value: result.data!.user?.apiToken);
+            // await CacheService.setData(key: CacheKeys.refreshToken, value: result.data!.refreshToken);
+
             CacheService.setData(key: CacheKeys.userEmail, value: result.data!.user?.email);
             CacheService.setData(key: CacheKeys.userActive, value: true);
             emit(AuthLoginSuccess(result.data!));

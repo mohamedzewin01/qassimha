@@ -48,6 +48,7 @@ class CacheKeys {
   static const String userPhoto = 'userPhoto';
   static const String displayName = 'displayName';
   static const String token = 'token';
+  static const String refreshToken = 'refreshToken';
 
   static const String userEmail = 'userEmail';
   static const String userGender = 'userGender';

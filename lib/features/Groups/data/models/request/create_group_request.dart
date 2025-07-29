@@ -12,15 +12,15 @@ class CreateGroupRequest {
   final String? groupType;
   @JsonKey(name: "currency")
   final String? currency;
-  @JsonKey(name: "is_active")
-  final int? isActive;
+  @JsonKey(name: "members")
+  final List<Members>? members;
 
   CreateGroupRequest ({
     this.name,
     this.description,
     this.groupType,
     this.currency,
-    this.isActive,
+    this.members,
   });
 
   factory CreateGroupRequest.fromJson(Map<String, dynamic> json) {
@@ -29,6 +29,27 @@ class CreateGroupRequest {
 
   Map<String, dynamic> toJson() {
     return _$CreateGroupRequestToJson(this);
+  }
+}
+
+@JsonSerializable()
+class Members {
+  @JsonKey(name: "user_id")
+  final String? userId;
+  @JsonKey(name: "role")
+  final String? role;
+
+  Members ({
+    this.userId,
+    this.role,
+  });
+
+  factory Members.fromJson(Map<String, dynamic> json) {
+    return _$MembersFromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return _$MembersToJson(this);
   }
 }
 

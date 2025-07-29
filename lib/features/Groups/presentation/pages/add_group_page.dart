@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qassimha/core/di/di.dart';
 import 'package:qassimha/features/Groups/presentation/bloc/Groups_cubit.dart';
 import 'package:qassimha/features/Groups/data/models/request/create_group_request.dart';
 
@@ -17,6 +18,7 @@ class _CreateGroupPageState extends State<CreateGroupPage>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
+  late GroupsCubit viewModel;
 
   // Form controllers
   final _nameController = TextEditingController();
@@ -58,6 +60,7 @@ class _CreateGroupPageState extends State<CreateGroupPage>
 
   @override
   void initState() {
+    viewModel=getIt.get<GroupsCubit>();
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -97,7 +100,9 @@ class _CreateGroupPageState extends State<CreateGroupPage>
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
-        child: BlocListener<GroupsCubit, GroupsState>(
+        child: BlocProvider.value(
+  value: viewModel,
+  child: BlocListener<GroupsCubit, GroupsState>(
           listener: (context, state) {
             if (state is CreateGroupsSuccess) {
               Navigator.pop(context, true); // Return true to indicate success
@@ -141,6 +146,7 @@ class _CreateGroupPageState extends State<CreateGroupPage>
             ],
           ),
         ),
+),
       ),
     );
   }
@@ -619,10 +625,10 @@ class _CreateGroupPageState extends State<CreateGroupPage>
             : _descriptionController.text.trim(),
         groupType: _selectedGroupType,
         currency: _selectedCurrency,
-        isActive: _isActive ? 1 : 0,
+
       );
 
-      context.read<GroupsCubit>().createGroups(request);
+      viewModel.createGroups(request);
     }
   }
 

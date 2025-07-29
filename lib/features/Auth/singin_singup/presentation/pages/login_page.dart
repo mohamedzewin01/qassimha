@@ -87,24 +87,7 @@ class _LoginPageState extends State<LoginPage>
 
   }
 
-  void _showSuccessMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 12),
-            Text('تم تسجيل الدخول بنجاح!'),
-          ],
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
+
 
   void _showErrorMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -141,7 +124,7 @@ class _LoginPageState extends State<LoginPage>
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthLoginSuccess) {
-            _showSuccessMessage();
+
             // Navigate to home page
             Navigator.pushReplacementNamed(context,RoutesManager.groupsPage);
           } else if (state is AuthLoginFailure) {

@@ -6,11 +6,11 @@ class GoogleSignInButton extends StatefulWidget {
   final String text;
 
   const GoogleSignInButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.isLoading = false,
     this.text = 'تسجيل الدخول باستخدام Google',
-  }) : super(key: key);
+  });
 
   @override
   State<GoogleSignInButton> createState() => _GoogleSignInButtonState();

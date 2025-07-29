@@ -48,6 +48,8 @@ class Groups {
   final String? createdAt;
   @JsonKey(name: "is_active")
   final int? isActive;
+  @JsonKey(name: "members")
+  final List<Members>? members;
 
   Groups ({
     this.id,
@@ -58,6 +60,7 @@ class Groups {
     this.currency,
     this.createdAt,
     this.isActive,
+    this.members,
   });
 
   factory Groups.fromJson(Map<String, dynamic> json) {
@@ -66,6 +69,45 @@ class Groups {
 
   Map<String, dynamic> toJson() {
     return _$GroupsToJson(this);
+  }
+}
+
+@JsonSerializable()
+class Members {
+  @JsonKey(name: "id")
+  final String? id;
+  @JsonKey(name: "group_id")
+  final String? groupId;
+  @JsonKey(name: "user_id")
+  final String? userId;
+  @JsonKey(name: "joined_date")
+  final String? joinedDate;
+  @JsonKey(name: "left_date")
+  final dynamic? leftDate;
+  @JsonKey(name: "is_active")
+  final int? isActive;
+  @JsonKey(name: "role")
+  final String? role;
+  @JsonKey(name: "created_at")
+  final String? createdAt;
+
+  Members ({
+    this.id,
+    this.groupId,
+    this.userId,
+    this.joinedDate,
+    this.leftDate,
+    this.isActive,
+    this.role,
+    this.createdAt,
+  });
+
+  factory Members.fromJson(Map<String, dynamic> json) {
+    return _$MembersFromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return _$MembersToJson(this);
   }
 }
 
