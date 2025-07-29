@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "914285581567",
+    "project_id": "qassimha-79387",
+    "storage_bucket": "qassimha-79387.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914285581567:android:d0745010193e18e9be28ca",
+        "android_client_info": {
+          "package_name": "com.example.qassimha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914285581567-7uuifd8p23bvtstp5idojhg2fv69qpdr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkas0He7_wzHvj_pu833kiI6cwbhI-bKQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914285581567-7uuifd8p23bvtstp5idojhg2fv69qpdr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914285581567-if1d0i1b6i1g2chbc3hb49mnf9oem94h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.qassimha"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
