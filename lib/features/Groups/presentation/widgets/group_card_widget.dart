@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qassimha/core/utils/date_formatter.dart';
+import 'package:qassimha/core/utils/group_utils.dart';
 import 'package:qassimha/features/Groups/data/models/response/get_groups_model.dart';
 
 class GroupCardWidget extends StatefulWidget {
@@ -59,7 +61,7 @@ class _GroupCardWidgetState extends State<GroupCardWidget>
 
   @override
   Widget build(BuildContext context) {
-    final groupColors = _getGroupTypeColors(widget.group.groupType);
+    final groupColors = GroupUtils.getGroupTypeColors(widget.group.groupType);
 
     return AnimatedBuilder(
       animation: _animationController,
@@ -211,7 +213,7 @@ class _GroupCardWidgetState extends State<GroupCardWidget>
         ),
         const SizedBox(width: 6),
         Text(
-          'تم الإنشاء: ${_formatDate(widget.group.createdAt)}',
+          'تم الإنشاء: ${DateFormatter.formatDateDisplay(widget.group.createdAt??'')}',
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[500],
@@ -285,7 +287,7 @@ class _GroupCardWidgetState extends State<GroupCardWidget>
   }
 
   Widget _buildTypeChip() {
-    final typeInfo = _getGroupTypeInfo(widget.group.groupType);
+    final typeInfo = GroupUtils.getGroupTypeInfo(widget.group.groupType);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -409,69 +411,10 @@ class _GroupCardWidgetState extends State<GroupCardWidget>
     );
   }
 
-  // Helper methods
-  List<Color> _getGroupTypeColors(String? groupType) {
-    switch (groupType?.toLowerCase()) {
-      case 'family':
-        return [const Color(0xFF667EEA), const Color(0xFF764BA2)];
-      case 'travel':
-        return [const Color(0xFF11998E), const Color(0xFF38EF7D)];
-      case 'business':
-        return [const Color(0xFFFF6B6B), const Color(0xFFEE5A52)];
-      case 'friends':
-        return [const Color(0xFF4FACFE), const Color(0xFF00F2FE)];
-      default:
-        return [const Color(0xFF667EEA), const Color(0xFF764BA2)];
-    }
-  }
-
-  Map<String, dynamic> _getGroupTypeInfo(String? groupType) {
-    switch (groupType?.toLowerCase()) {
-      case 'family':
-        return {
-          'icon': Icons.home_rounded,
-          'label': 'عائلة',
-          'color': const Color(0xFF667EEA),
-        };
-      case 'travel':
-        return {
-          'icon': Icons.flight_rounded,
-          'label': 'سفر',
-          'color': const Color(0xFF11998E),
-        };
-      case 'business':
-        return {
-          'icon': Icons.business_center_rounded,
-          'label': 'عمل',
-          'color': const Color(0xFFFF6B6B),
-        };
-      case 'friends':
-        return {
-          'icon': Icons.group_rounded,
-          'label': 'أصدقاء',
-          'color': const Color(0xFF4FACFE),
-        };
-      default:
-        return {
-          'icon': Icons.category_rounded,
-          'label': 'أخرى',
-          'color': const Color(0xFF667EEA),
-        };
-    }
-
-  }
 
   IconData _getGroupTypeIcon(String? groupType) {
-    return _getGroupTypeInfo(groupType)['icon'];
+    return GroupUtils.getGroupTypeInfo(groupType)['icon'];
   }
 
-  String _formatDate(String? dateString) {
-    if (dateString == null) return 'غير محدد';
-    try {
-      final date = DateTime.parse(dateString);
-      return '${date.day}/${date.month}/${date.year}';
-    } catch (e) {
-      return 'غير محدد';
-    }
-  }
+
 }

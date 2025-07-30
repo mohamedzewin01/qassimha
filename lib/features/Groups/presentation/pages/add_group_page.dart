@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qassimha/core/constants/group_constants.dart';
 import 'package:qassimha/core/di/di.dart';
+import 'package:qassimha/core/widgets/show_snackBar_widget.dart';
 import 'package:qassimha/features/Groups/presentation/bloc/Groups_cubit.dart';
 import 'package:qassimha/features/Groups/data/models/request/create_group_request.dart';
 
@@ -29,32 +31,32 @@ class _CreateGroupPageState extends State<CreateGroupPage>
   String _selectedCurrency = 'SAR';
   bool _isActive = true;
 
-  final List<Map<String, dynamic>> _groupTypes = [
-    {
-      'value': 'family',
-      'label': 'عائلة',
-      'icon': Icons.home,
-      'color': const Color(0xFF667EEA),
-    },
-    {
-      'value': 'travel',
-      'label': 'سفر',
-      'icon': Icons.flight,
-      'color': const Color(0xFF11998E),
-    },
-    {
-      'value': 'business',
-      'label': 'عمل',
-      'icon': Icons.business,
-      'color': const Color(0xFFFF512F),
-    },
-    {
-      'value': 'friends',
-      'label': 'أصدقاء',
-      'icon': Icons.group,
-      'color': const Color(0xFF4FACFE),
-    },
-  ];
+  // final List<Map<String, dynamic>> _groupTypes = [
+  //   {
+  //     'value': 'family',
+  //     'label': 'عائلة',
+  //     'icon': Icons.home,
+  //     'color': const Color(0xFF667EEA),
+  //   },
+  //   {
+  //     'value': 'travel',
+  //     'label': 'سفر',
+  //     'icon': Icons.flight,
+  //     'color': const Color(0xFF11998E),
+  //   },
+  //   {
+  //     'value': 'business',
+  //     'label': 'عمل',
+  //     'icon': Icons.business,
+  //     'color': const Color(0xFFFF512F),
+  //   },
+  //   {
+  //     'value': 'friends',
+  //     'label': 'أصدقاء',
+  //     'icon': Icons.group,
+  //     'color': const Color(0xFF4FACFE),
+  //   },
+  // ];
 
   final List<String> _currencies = ['SAR', 'USD', 'EUR', 'AED'];
 
@@ -107,7 +109,7 @@ class _CreateGroupPageState extends State<CreateGroupPage>
             if (state is CreateGroupsSuccess) {
               Navigator.pop(context, true); // Return true to indicate success
             } else if (state is CreateGroupsFailure) {
-              _showErrorSnackBar(context, state.exception.toString());
+              ShowSnackBar.showErrorSnackBar(context, state.exception.toString());
             }
           },
           child: Column(
@@ -361,9 +363,9 @@ class _CreateGroupPageState extends State<CreateGroupPage>
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),
-                  itemCount: _groupTypes.length,
+                  itemCount: GroupConstants.groupTypes.length,
                   itemBuilder: (context, index) {
-                    final groupType = _groupTypes[index];
+                    final groupType = GroupConstants.groupTypes[index];
                     final isSelected = _selectedGroupType == groupType['value'];
 
                     return TweenAnimationBuilder<double>(
@@ -632,17 +634,5 @@ class _CreateGroupPageState extends State<CreateGroupPage>
     }
   }
 
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
+
 }

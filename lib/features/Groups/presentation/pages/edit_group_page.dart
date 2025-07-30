@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qassimha/core/constants/group_constants.dart';
+import 'package:qassimha/core/utils/date_formatter.dart';
+import 'package:qassimha/core/widgets/show_snackBar_widget.dart';
 import 'package:qassimha/features/Groups/presentation/bloc/Groups_cubit.dart';
 import 'package:qassimha/features/Groups/data/models/request/update_group_request.dart';
 import 'package:qassimha/features/Groups/data/models/response/get_groups_model.dart';
@@ -30,34 +33,6 @@ class _EditGroupPageState extends State<EditGroupPage>
   late String _selectedCurrency;
   late bool _isActive;
 
-  final List<Map<String, dynamic>> _groupTypes = [
-    {
-      'value': 'family',
-      'label': 'عائلة',
-      'icon': Icons.home,
-      'color': const Color(0xFF667EEA),
-    },
-    {
-      'value': 'travel',
-      'label': 'سفر',
-      'icon': Icons.flight,
-      'color': const Color(0xFF11998E),
-    },
-    {
-      'value': 'business',
-      'label': 'عمل',
-      'icon': Icons.business,
-      'color': const Color(0xFFFF512F),
-    },
-    {
-      'value': 'friends',
-      'label': 'أصدقاء',
-      'icon': Icons.group,
-      'color': const Color(0xFF4FACFE),
-    },
-  ];
-
-  final List<String> _currencies = ['SAR', 'USD', 'EUR', 'AED'];
 
   @override
   void initState() {
@@ -115,7 +90,7 @@ class _EditGroupPageState extends State<EditGroupPage>
             if (state is UpdateGroupsSuccess) {
               Navigator.pop(context, true); // Return true to indicate success
             } else if (state is UpdateGroupsFailure) {
-              _showErrorSnackBar(context, state.exception.toString());
+              ShowSnackBar.showErrorSnackBar(context, state.exception.toString());
             }
           },
           child: Column(
@@ -238,12 +213,12 @@ class _EditGroupPageState extends State<EditGroupPage>
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: _getGroupTypeColors(widget.group.groupType),
+                  colors: GroupConstants.groupTypeColors(widget.group.groupType),
                 ),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: _getGroupTypeColors(widget.group.groupType)[0].withOpacity(0.3),
+                    color: GroupConstants.groupTypeColors(widget.group.groupType)[0].withOpacity(0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -258,7 +233,7 @@ class _EditGroupPageState extends State<EditGroupPage>
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
-                      _getGroupTypeIcon(widget.group.groupType),
+                      GroupConstants.groupTypeIcon(widget.group.groupType),
                       color: Colors.white,
                       size: 32,
                     ),
@@ -278,7 +253,7 @@ class _EditGroupPageState extends State<EditGroupPage>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'تم الإنشاء: ${_formatDate(widget.group.createdAt)}',
+                          'تم الإنشاء: ${DateFormatter.formatDateDisplay(widget.group.createdAt??'')}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.white.withOpacity(0.9),
@@ -442,9 +417,9 @@ class _EditGroupPageState extends State<EditGroupPage>
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),
-                  itemCount: _groupTypes.length,
+                  itemCount: GroupConstants.groupTypes.length,
                   itemBuilder: (context, index) {
-                    final groupType = _groupTypes[index];
+                    final groupType = GroupConstants.groupTypes[index];
                     final isSelected = _selectedGroupType == groupType['value'];
 
                     return TweenAnimationBuilder<double>(
@@ -544,7 +519,7 @@ class _EditGroupPageState extends State<EditGroupPage>
                       border: InputBorder.none,
                       prefixIcon: Icon(Icons.monetization_on, color: Color(0xFF667EEA)),
                     ),
-                    items: _currencies.map((currency) {
+                    items: GroupConstants.currencies.map((currency) {
                       return DropdownMenuItem(
                         value: currency,
                         child: Text(currency),
@@ -697,47 +672,6 @@ class _EditGroupPageState extends State<EditGroupPage>
     );
   }
 
-  // Helper methods
-  List<Color> _getGroupTypeColors(String? groupType) {
-    switch (groupType?.toLowerCase()) {
-      case 'family':
-        return [const Color(0xFF667EEA), const Color(0xFF764BA2)];
-      case 'travel':
-        return [const Color(0xFF11998E), const Color(0xFF38EF7D)];
-      case 'business':
-        return [const Color(0xFFFF512F), const Color(0xFFDD2476)];
-      case 'friends':
-        return [const Color(0xFF4FACFE), const Color(0xFF00F2FE)];
-      default:
-        return [const Color(0xFF667EEA), const Color(0xFF764BA2)];
-    }
-  }
-
-  IconData _getGroupTypeIcon(String? groupType) {
-    switch (groupType?.toLowerCase()) {
-      case 'family':
-        return Icons.home;
-      case 'travel':
-        return Icons.flight;
-      case 'business':
-        return Icons.business;
-      case 'friends':
-        return Icons.group;
-      default:
-        return Icons.groups;
-    }
-  }
-
-  String _formatDate(String? dateString) {
-    if (dateString == null) return 'غير محدد';
-    try {
-      final date = DateTime.parse(dateString);
-      return '${date.day}/${date.month}/${date.year}';
-    } catch (e) {
-      return 'غير محدد';
-    }
-  }
-
   void _updateGroup() {
     if (_formKey.currentState!.validate()) {
       final request = UpdateGroupRequest(
@@ -755,17 +689,4 @@ class _EditGroupPageState extends State<EditGroupPage>
     }
   }
 
-  void _showErrorSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
 }
