@@ -1,29 +1,30 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:qassimha/features/EditGroupPage/domain/entities/update_group.dart';
 import 'package:qassimha/features/Groups/domain/entities/groups_entities.dart';
 
-part 'create_group_model.g.dart';
+part 'update_group_model.g.dart';
 
 @JsonSerializable()
-class CreateGroupModel {
+class UpdateGroupModel {
   @JsonKey(name: "status")
   final String? status;
   @JsonKey(name: "message")
   final String? message;
 
-  CreateGroupModel ({
+  UpdateGroupModel ({
     this.status,
     this.message,
   });
 
-  factory CreateGroupModel.fromJson(Map<String, dynamic> json) {
-    return _$CreateGroupModelFromJson(json);
+  factory UpdateGroupModel.fromJson(Map<String, dynamic> json) {
+    return _$UpdateGroupModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return _$CreateGroupModelToJson(this);
+    return _$UpdateGroupModelToJson(this);
   }
-  CreateGroupEntity toEntity() {
-    return CreateGroupEntity(
+  UpdateGroupEntity toEntity() {
+    return UpdateGroupEntity(
       status: status,
       message: message,
     );

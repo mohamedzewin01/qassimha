@@ -13,7 +13,7 @@ class CreateGroupRequest {
   @JsonKey(name: "currency")
   final String? currency;
   @JsonKey(name: "members")
-  final List<Members>? members;
+   List<Members>? members;
 
   CreateGroupRequest ({
     this.name,

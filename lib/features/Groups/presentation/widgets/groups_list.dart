@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qassimha/features/EditGroupPage/presentation/pages/EditGroupPage_page.dart';
 import 'package:qassimha/features/Groups/data/models/response/get_groups_model.dart';
 import 'package:qassimha/features/Groups/presentation/bloc/Groups_cubit.dart';
 import 'package:qassimha/features/Groups/presentation/pages/edit_group_page.dart';
@@ -42,7 +43,7 @@ class GroupsList extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditGroupPage(group: group, viewModel: viewModel),
+                        builder: (context) => EditGroupPage(group: group, ),
                       ),
                     );
                   },
