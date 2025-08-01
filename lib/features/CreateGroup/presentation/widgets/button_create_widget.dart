@@ -33,8 +33,8 @@ class ButtonCreateWidget extends StatelessWidget {
                     opacity: value,
                     child: Column(
                       children: [
-                        // رسالة التحقق من صحة البيانات
-                        if (hasMinimumMembers)
+                        // رسالة التحقق من صحة البيانات - تظهر عندما لا يوجد أعضاء
+                        if (!hasMinimumMembers) // المنطق المُصحح هنا
                           Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: const EdgeInsets.all(12),
@@ -61,8 +61,8 @@ class ButtonCreateWidget extends StatelessWidget {
                             ),
                           ),
 
-                        // معلومات الأعضاء المختارين
-                        if (hasMinimumMembers)
+                        // معلومات الأعضاء المختارين - تظهر عندما يوجد أعضاء
+                        if (hasMinimumMembers) // هذا صحيح
                           Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: const EdgeInsets.all(12),

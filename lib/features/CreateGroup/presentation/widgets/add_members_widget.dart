@@ -347,6 +347,7 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
                 ? NetworkImage(member.avatarUrl!)
                 : null,
             child: member.avatarUrl == null
+
                 ? Text(
               member.displayName.isNotEmpty
                   ? member.displayName[0].toUpperCase()
