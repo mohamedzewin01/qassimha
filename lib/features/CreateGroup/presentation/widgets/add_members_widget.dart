@@ -8,9 +8,13 @@ import 'package:qassimha/features/CreateGroup/data/models/selected_member.dart';
 import 'package:qassimha/features/CreateGroup/presentation/bloc/members/members_cubit.dart';
 import 'package:qassimha/features/CreateGroup/presentation/bloc/members/selected_members/selected_members_cubit.dart';
 
-
 class AddMembersWidget extends StatefulWidget {
-  const AddMembersWidget({super.key});
+  final SelectedMembersCubit selectedMembersCubit; // استقبل الـ cubit من الخارج
+
+  const AddMembersWidget({
+    super.key,
+    required this.selectedMembersCubit, // اجعله مطلوب
+  });
 
   @override
   State<AddMembersWidget> createState() => _AddMembersWidgetState();
@@ -18,7 +22,6 @@ class AddMembersWidget extends StatefulWidget {
 
 class _AddMembersWidgetState extends State<AddMembersWidget> {
   late MembersCubit membersCubit;
-  late SelectedMembersCubit selectedMembersCubit;
   late TextEditingController searchController;
   Timer? _debounce;
 
@@ -26,7 +29,6 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
   void initState() {
     super.initState();
     membersCubit = getIt.get<MembersCubit>();
-    selectedMembersCubit = getIt.get<SelectedMembersCubit>();
     searchController = TextEditingController();
   }
 
@@ -52,7 +54,7 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: membersCubit),
-        BlocProvider.value(value: selectedMembersCubit),
+        BlocProvider.value(value: widget.selectedMembersCubit), // استخدم الـ cubit المُمرر
       ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,6 +109,8 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
           // الأعضاء المختارين
           BlocBuilder<SelectedMembersCubit, SelectedMembersState>(
             builder: (context, selectedState) {
+              print('Selected Members Count: ${selectedState.selectedMembers.length}'); // للتتبع
+
               if (selectedState.selectedMembers.isNotEmpty) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +281,7 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
   Widget _buildSearchResultItem(Results result) {
     return BlocBuilder<SelectedMembersCubit, SelectedMembersState>(
       builder: (context, selectedState) {
-        final isSelected = selectedMembersCubit.isMemberSelected(result.id ?? '');
+        final isSelected = widget.selectedMembersCubit.isMemberSelected(result.id ?? '');
 
         return ListTile(
           leading: CircleAvatar(
@@ -309,10 +313,14 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
           ),
           trailing: IconButton(
             onPressed: isSelected
-                ? () => selectedMembersCubit.removeMember(result.id ?? '')
+                ? () {
+              print('Removing member: ${result.id}'); // للتتبع
+              widget.selectedMembersCubit.removeMember(result.id ?? '');
+            }
                 : () {
+              print('Adding member: ${result.id}'); // للتتبع
               final member = SelectedMember.fromResults(result);
-              selectedMembersCubit.addMember(member);
+              widget.selectedMembersCubit.addMember(member);
             },
             icon: Icon(
               isSelected ? Icons.remove_circle : Icons.add_circle,
@@ -321,8 +329,9 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
           ),
           onTap: () {
             if (!isSelected) {
+              print('Tapping to add member: ${result.id}'); // للتتبع
               final member = SelectedMember.fromResults(result);
-              selectedMembersCubit.addMember(member);
+              widget.selectedMembersCubit.addMember(member);
             }
           },
         );
@@ -347,7 +356,6 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
                 ? NetworkImage(member.avatarUrl!)
                 : null,
             child: member.avatarUrl == null
-
                 ? Text(
               member.displayName.isNotEmpty
                   ? member.displayName[0].toUpperCase()
@@ -378,21 +386,13 @@ class _AddMembersWidgetState extends State<AddMembersWidget> {
               ],
             ),
           ),
-          DropdownButton<String>(
-            value: member.role,
-            onChanged: (newRole) {
-              if (newRole != null) {
-                selectedMembersCubit.updateMemberRole(member.id, newRole);
-              }
-            },
-            items: const [
-              DropdownMenuItem(value: 'member', child: Text('عضو')),
-              DropdownMenuItem(value: 'admin', child: Text('مدير')),
-            ],
-          ),
+
           const SizedBox(width: 8),
           IconButton(
-            onPressed: () => selectedMembersCubit.removeMember(member.id),
+            onPressed: () {
+              print('Removing member from selected: ${member.id}'); // للتتبع
+              widget.selectedMembersCubit.removeMember(member.id);
+            },
             icon: const Icon(Icons.close, color: Colors.red, size: 20),
           ),
         ],

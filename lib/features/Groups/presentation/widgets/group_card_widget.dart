@@ -4,7 +4,7 @@ import 'package:qassimha/core/utils/group_utils.dart';
 import 'package:qassimha/features/Groups/data/models/response/get_groups_model.dart';
 
 class GroupCardWidget extends StatefulWidget {
-  final Groups group;
+  final CreatedGroups group;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;

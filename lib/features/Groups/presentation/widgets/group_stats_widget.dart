@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:qassimha/features/Groups/data/models/response/get_groups_model.dart';
 
 class GroupStatsWidget extends StatefulWidget {
-  final List<Groups> groups;
+  final List<CreatedGroups> groups;
 
-  const GroupStatsWidget({Key? key, required this.groups}) : super(key: key);
+  const GroupStatsWidget({super.key, required this.groups});
 
   @override
   State<GroupStatsWidget> createState() => _GroupStatsWidgetState();
